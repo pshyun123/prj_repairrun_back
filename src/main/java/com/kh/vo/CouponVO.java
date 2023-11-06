@@ -15,10 +15,5 @@ public class CouponVO {
     private int minPrice; // 최소 금액
     private String expDate; // 유효 기간
 
-    public CouponVO(String couponType, int discountAmount, int minPrice, String expDate) {
-        this.couponType = couponType;
-        this.discountAmount = discountAmount;
-        this.minPrice = minPrice;
-        this.expDate = expDate;
-    }
+
 }
