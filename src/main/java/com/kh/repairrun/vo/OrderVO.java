@@ -1,4 +1,4 @@
-package com.kh.vo;
+package com.kh.repairrun.vo;
 
 
 import lombok.AllArgsConstructor;

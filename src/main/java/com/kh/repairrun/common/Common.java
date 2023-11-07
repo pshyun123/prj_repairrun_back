@@ -1,4 +1,4 @@
-package com.kh.common;
+package com.kh.repairrun.common;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
