@@ -23,4 +23,16 @@ public class MemberController {
         boolean result = dao.memberLoginCheck(memberId, memberPw);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    //중복 체크
+    @PostMapping("/uniquecheck")
+    public ResponseEntity<Boolean> uniqueCheck(@RequestBody Map<String, String> checkData) {
+        Integer type = Integer.parseInt(checkData.get("type"));
+        String inputVal = checkData.get("inputVal");
+        System.out.println("type : " + type);
+        System.out.println("inputVal : " + inputVal);
+        MemberDAO dao = new MemberDAO();
+        boolean result = dao.checkUnique(type, inputVal);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

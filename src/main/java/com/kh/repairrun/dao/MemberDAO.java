@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MemberDAO {
     private Connection conn = null;
@@ -36,5 +38,33 @@ public class MemberDAO {
         Common.close(pstmt);
         Common.close(conn);
         return isMember;
+    }
+
+    // 중복체크
+    public boolean checkUnique(int type, String inputVal) {
+        boolean isUnique = false;
+        String[] sqlList = {
+                "SELECT COUNT(*) FROM MEMBER_TB WHERE USER_ID_PK = ?",
+                "SELECT COUNT(*) FROM MEMBER_TB WHERE USER_PHONE = ?",
+                "SELECT COUNT(*) FROM MEMBER_TB WHERE USER_EMAIL = ?"
+        };
+        try {
+            conn = Common.getConnection();
+            String sql = sqlList[type];
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,inputVal);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                if (rs.getInt("Count(*)") == 1) {
+                    isUnique = true; // 이미 존재하는 값
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(rs);
+        Common.close(pstmt);
+        Common.close(conn);
+        return isUnique;
     }
 }
