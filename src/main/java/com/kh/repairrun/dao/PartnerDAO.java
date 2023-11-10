@@ -1,11 +1,14 @@
 package com.kh.repairrun.dao;
 
 import com.kh.repairrun.common.Common;
+import com.kh.repairrun.vo.PartnerVO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PartnerDAO {
     private Connection conn = null;
@@ -37,4 +40,25 @@ public class PartnerDAO {
         Common.close(conn);
         return isPartner;
     }
-}
+
+    // 파트너 로고 리스트화
+    public List<String> partnerLogos()   {
+        List<String> partnerLogos = new ArrayList<>();
+        try {
+            conn = Common.getConnection();
+            String sql = "SELECT PTN_LOGO FROM PARTNER_TB";
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while(rs.next()) {
+                partnerLogos.add(rs.getString("PTN_LOGO"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(rs);
+        Common.close(pstmt);
+        Common.close(conn);
+        return partnerLogos;
+    }
+};
