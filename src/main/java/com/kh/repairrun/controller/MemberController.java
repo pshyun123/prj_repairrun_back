@@ -35,4 +35,19 @@ public class MemberController {
         boolean result = dao.checkUnique(type, inputVal);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    //회원가입
+    @PostMapping("/new")
+    public ResponseEntity<Boolean> newMember(@RequestBody Map<String, String> newMemData) {
+        String id = newMemData.get("id");
+        String pw = newMemData.get("pw");
+        String name = newMemData.get("name");
+        String userEmail = newMemData.get("userEmail");
+        String userPhone = newMemData.get("userPhone");
+        String userAddr = newMemData.get("userAddr");
+        String userImg = newMemData.get("userImg");
+        MemberDAO dao = new MemberDAO();
+        boolean result = dao.newMemberInsert(id, pw, name, userEmail, userPhone, userAddr, userImg);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

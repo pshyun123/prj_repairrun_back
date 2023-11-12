@@ -67,4 +67,32 @@ public class MemberDAO {
         Common.close(conn);
         return isUnique;
     }
+
+    //회원가입
+    public boolean newMemberInsert(String id, String pw, String name, String userEmail, String userPhone, String userAddr, String userImg) {
+        int result = 0;
+        String sql = "INSERT INTO MEMBER_TB (USER_ID_PK, USER_PW, USER_NAME, USER_EMAIL, USER_PHONE, USER_ADDR, USER_IMG) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,id);
+            pstmt.setString(2, pw);
+            pstmt.setString(3, name);
+            pstmt.setString(4, userEmail);
+            pstmt.setString(5, userPhone);
+            pstmt.setString(6, userAddr);
+            pstmt.setString(7, userImg);
+            result = pstmt.executeUpdate();
+            System.out.println("가입 결과 : " + result);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
+
+        if(result == 1) return true;
+        else return false;
+    }
 }

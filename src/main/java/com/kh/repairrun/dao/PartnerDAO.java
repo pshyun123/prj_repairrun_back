@@ -129,5 +129,63 @@ public class PartnerDAO {
         return list;
     }
 
+    // 중복체크
+    public boolean checkUnique(int type, String inputVal) {
+        boolean isUnique = false;
+        String[] sqlList = {
+                "SELECT COUNT(*) FROM PARTNER_TB WHERE PTN_ID_PK = ?",
+                "SELECT COUNT(*) FROM PARTNER_TB WHERE PTN_PHONE = ?",
+                "SELECT COUNT(*) FROM PARTNER_TB WHERE PTN_EMAIL = ?"
+        };
+        try {
+            conn = Common.getConnection();
+            String sql = sqlList[type];
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,inputVal);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                System.out.println("중복 : " + rs.getInt("Count(*)"));
+                if (rs.getInt("Count(*)") == 1) {
+                    isUnique = true; // 이미 존재하는 값
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(rs);
+        Common.close(pstmt);
+        Common.close(conn);
+        return isUnique;
+    }
+
+    //회원가입
+    public boolean newPartnerInsert(String id, String pw, String name, String ptnEmail, String ptnPhone, String ptnAddr, String ptnDesc ,String ptnLogo) {
+        int result = 0;
+        String sql = "INSERT INTO PARTNER_TB (PTN_ID_PK, PTN_PW, PTN_NAME, PTN_EMAIL, PTN_PHONE, PTN_ADDR, PTN_DESC, PTN_LOGO, PTN_UNIQUE_NUM) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, PARTNER_NUM_SEQ.NEXTVAL)";
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,id);
+            pstmt.setString(2, pw);
+            pstmt.setString(3, name);
+            pstmt.setString(4, ptnEmail);
+            pstmt.setString(5, ptnPhone);
+            pstmt.setString(6, ptnAddr);
+            pstmt.setString(7, ptnDesc);
+            pstmt.setString(8, ptnLogo);
+            result = pstmt.executeUpdate();
+            System.out.println("가입 결과 : " + result);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
+
+        if(result == 1) return true;
+        else return false;
+    }
+
 
 };
