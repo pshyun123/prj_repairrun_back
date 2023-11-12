@@ -33,4 +33,14 @@ public class PartnerController {
         return new ResponseEntity<> (partnerLogo, HttpStatus.OK);
 
     }
+
+    @PostMapping("/itemlist")
+    public ResponseEntity<List<Map<String,Object>>> ptnItemList(@RequestBody Map<String, String> ptnId) {
+        String id = ptnId.get("id");
+        System.out.println("ptnid :" + id);
+        PartnerDAO dao = new PartnerDAO();
+        List<Map<String,Object>> result = new ArrayList<>();
+        result = dao.partnerItemList(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

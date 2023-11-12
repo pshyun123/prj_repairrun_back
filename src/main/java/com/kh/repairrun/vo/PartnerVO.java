@@ -24,11 +24,6 @@ public class PartnerVO {
     private int repairDays;
     private int repairPrice;
 
-    // 로고 슬라이드
-    public PartnerVO(String ptnLogo) {
-        this.ptnLogo = ptnLogo;
-    }
-
     // 로그인
     public PartnerVO(String ptnId, String ptnPw) {
         this.ptnId = ptnId;
@@ -65,11 +60,5 @@ public class PartnerVO {
         this.rating = rating;
     }
 
-    //파트너 수선정보
-    public PartnerVO(String repairItem, String repairDetail, int repairDays, int repairPrice) {
-        this.repairItem = repairItem;
-        this.repairDetail = repairDetail;
-        this.repairDays = repairDays;
-        this.repairPrice = repairPrice;
-    }
+    // 파트너 수선 정보
 }
