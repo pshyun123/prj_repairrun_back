@@ -42,6 +42,39 @@ public class PartnerDAO {
         Common.close(conn);
         return isPartner;
     }
+    // 파트너 정보 조회
+    public Map<String, String> partnerInfo(String ptnId) {
+        Map<String, String> ptnInfo = new HashMap<>();
+        String sql = "SELECT PTN_NAME, PTN_LOGO, PTN_EMAIL, PTN_PHONE, PTN_ADDR, PTN_DESC FROM PARTNER_TB WHERE PTN_ID_PK = ?";
+        try{
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, ptnId);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                String ptnName = rs.getString("PTN_NAME");
+                String ptnLogo = rs.getString("PTN_LOGO");
+                String ptnEmail = rs.getString("PTN_EMAIL");
+                String ptnPhone = rs.getString("PTN_PHONE");
+                String ptnAddr = rs.getString("PTN_ADDR");
+                String ptnDesc = rs.getString("PTN_DESC");
+
+                ptnInfo.put("userName", ptnName);
+                ptnInfo.put("userImg", ptnLogo);
+                ptnInfo.put("userEmail", ptnEmail);
+                ptnInfo.put("userPhone", ptnPhone);
+                ptnInfo.put("userAddr", ptnAddr);
+                ptnInfo.put("ptnDesc", ptnDesc);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        Common.close(rs);
+        Common.close(pstmt);
+        Common.close(conn);
+        return ptnInfo;
+    }
+
 
     // 파트너 로고 리스트화
     public List<String> partnerLogos()   {

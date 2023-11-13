@@ -26,6 +26,14 @@ public class PartnerController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PostMapping("/ptninfo")
+    public ResponseEntity<Map<String, String>> partnerInfo(@RequestBody Map<String, String> ptnData){
+        String ptnId = ptnData.get("ptnId");
+        PartnerDAO dao = new PartnerDAO();
+        Map<String,String> result = dao.partnerInfo(ptnId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PostMapping("/logolist")
     public ResponseEntity<List<String>> partnerLogo() {
         PartnerDAO dao = new PartnerDAO();

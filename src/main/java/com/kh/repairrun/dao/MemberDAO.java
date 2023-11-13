@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MemberDAO {
     private Connection conn = null;
@@ -38,6 +40,37 @@ public class MemberDAO {
         Common.close(pstmt);
         Common.close(conn);
         return isMember;
+    }
+
+    // 회원 정보 조회
+    public Map<String, String> memberInfo(String memberId) {
+        Map<String,String> memberInfo = new HashMap<>();
+        String sql = "SELECT USER_NAME, USER_EMAIL, USER_PHONE, USER_ADDR, USER_IMG FROM MEMBER_TB WHERE USER_ID_PK = ?";
+        try{
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                String userName = rs.getString("USER_NAME");
+                String userEmail = rs.getString("USER_EMAIL");
+                String userPhone = rs.getString("USER_PHONE");
+                String userAddr = rs.getString("USER_ADDR");
+                String userImg = rs.getString("USER_IMG");
+
+                memberInfo.put("userName", userName);
+                memberInfo.put("userEmail", userEmail);
+                memberInfo.put("userPhone", userPhone);
+                memberInfo.put("userAddr", userAddr);
+                memberInfo.put("userImg", userImg);
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(rs);
+        Common.close(pstmt);
+        Common.close(conn);
+        return memberInfo;
     }
 
     // 중복체크

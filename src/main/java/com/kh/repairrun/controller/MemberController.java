@@ -24,6 +24,16 @@ public class MemberController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    // 회원정보 조회
+    @PostMapping("/memberinfo")
+    public ResponseEntity<Map<String, String>> memeberInfo(@RequestBody Map<String, String> memberData) {
+        String memberId = memberData.get("memberId");
+        MemberDAO dao = new MemberDAO();
+        Map<String, String> result = dao.memberInfo(memberId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
     //중복 체크
     @PostMapping("/uniquecheck")
     public ResponseEntity<Boolean> uniqueCheck(@RequestBody Map<String, String> checkData) {
