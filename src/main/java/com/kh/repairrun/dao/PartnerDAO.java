@@ -187,5 +187,25 @@ public class PartnerDAO {
         else return false;
     }
 
+    // 수선항목 수정
+    public boolean updateItemInfo (String ptnId, String repairDetail, int days, int price) {
+        boolean isUpdate = false;
+        String sql = "UPDATE PARTNER_ITEM_TB SET REPAIR_PRICE =?, REPAIR_DAYS =? WHERE PTN_ID_FK = ? AND REPAIR_DETAIL_FK = ?";
+        try{
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, price);
+            pstmt.setInt(2, days);
+            pstmt.setString(3, ptnId);
+            pstmt.setString(4, repairDetail);
+            int result = pstmt.executeUpdate();
+            if(result == 1) isUpdate = true;
 
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
+        return isUpdate;
+    }
 };

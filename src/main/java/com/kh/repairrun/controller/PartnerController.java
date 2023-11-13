@@ -71,4 +71,15 @@ public class PartnerController {
         boolean result = dao.newPartnerInsert(id, pw, name, ptnEmail, ptnPhone, ptnAddr, ptnDesc, ptnLogo);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PostMapping("/updatedetail")
+    public ResponseEntity<Boolean> updateDetail(@RequestBody Map<String,String> updateInfo) {
+        String ptnId = updateInfo.get("ptnId");
+        String repairDetail = updateInfo.get("repairDetail");
+        Integer days = Integer.parseInt(updateInfo.get("days"));
+        Integer price = Integer.parseInt(updateInfo.get("price"));
+        PartnerDAO dao = new PartnerDAO();
+        boolean result = dao.updateItemInfo(ptnId, repairDetail, days, price);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }
