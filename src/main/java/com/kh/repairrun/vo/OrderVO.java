@@ -56,15 +56,6 @@ public class OrderVO {
         this.brand = brand;
     }
 
-    // 수선사진 등록
-
-    // 요청사항
-
-    // 빠른 매칭 지역
-    public OrderVO(String ptnAddr) {
-        this.ptnAddr = ptnAddr;
-
-    }
 
     // 파트너 선택
     public OrderVO(String ptnName, String repairItem, String ptnLogo, BigDecimal ratingAVG, int repairPrice) {
@@ -97,4 +88,5 @@ public class OrderVO {
         this.repairDays = repairDays;
         this.brand = brand;
     }
+
 }
