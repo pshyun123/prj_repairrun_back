@@ -15,7 +15,7 @@ public class CouponDAO {
     private ResultSet rs = null;
     private PreparedStatement pstmt = null;
 
-    public List<Map<String , String>> userCoupon() {
+    public List<Map<String, String>> userCoupon() {
         List<Map<String, String>> couponList = new ArrayList<>();
         try {
             conn = Common.getConnection();
