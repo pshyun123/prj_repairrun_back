@@ -54,22 +54,33 @@ public class OrderDAO {
             conn = Common.getConnection();
             String sql = "SELECT " +
                     "PT.PTN_LOGO, " +
-                    "COALESCE(AVG(RV.RATING), 0) AS RATING, " +
+                    "NVL(AVG(RV.RATING), 0) AS RATING, " +
                     "PT.PTN_NAME, " +
                     "PI.REPAIR_DETAIL_FK, " +
-                    "PI.REPAIR_PRICE " +
+                    "PI.REPAIR_PRICE, " +
+                    "PT.PTN_ID_PK, " +
+                    "PI.REPAIR_DAYS " +
                     "FROM " +
                     "PARTNER_ITEM_TB PI " +
-                    "JOIN PARTNER_TB PT ON PI.PTN_ID_FK = PT.PTN_ID_PK " +
-                    "LEFT JOIN ORDER_TB O ON PT.PTN_ID_PK = O.PTN_ID_FK " +
-                    "LEFT JOIN REVIEW_TB RV ON O.ORDER_NUM_PK = RV.ORDER_NUM_FK WHERE PI.REPAIR_DETAIL_FK = ?" +
+                    "JOIN PARTNER_TB PT ON " +
+                    "PI.PTN_ID_FK = PT.PTN_ID_PK " +
+                    "LEFT JOIN ORDER_TB O ON " +
+                    "PT.PTN_ID_PK = O.PTN_ID_FK " +
+                    "LEFT JOIN REVIEW_TB RV ON " +
+                    "O.ORDER_NUM_PK = RV.ORDER_NUM_FK " +
+                    "WHERE " +
+                    "PI.REPAIR_DETAIL_FK = ? AND PI.REPAIR_PRICE <> 0 " +
                     "GROUP BY " +
-                    "PT.PTN_LOGO, PT.PTN_NAME, PI.REPAIR_DETAIL_FK, PI.REPAIR_PRICE";
+                    "PT.PTN_LOGO, PT.PTN_NAME, PI.REPAIR_DETAIL_FK, PI.REPAIR_PRICE, PT.PTN_ID_PK, PI.REPAIR_DAYS " +
+                    "ORDER BY " +
+                    "PI.REPAIR_PRICE ASC";
             pstmt = conn.prepareStatement(sql);// 받을 준비
             pstmt.setString(1, selDetail);
             rs = pstmt.executeQuery();
 
             while (rs.next()) { // 값이 있는 동안 한줄씩 반환
+                String ptnId = rs.getString("PTN_ID_PK");
+                int repairDays = rs.getInt("REPAIR_DAYS");
                 String ptnLogo = rs.getString("PTN_LOGO");
                 double rating = rs.getDouble("RATING");
                 String ptnName = rs.getString("PTN_NAME");
@@ -78,6 +89,8 @@ public class OrderDAO {
 
                 // 리액트에서 선언한 이름을 ""사이에
                 Map<String, Object> ptnMap = new HashMap<>();
+                ptnMap.put("ptnId",ptnId);
+                ptnMap.put("repairDays",repairDays);
                 ptnMap.put("ptnLogo",ptnLogo);
                 ptnMap.put("rating",rating);
                 ptnMap.put("ptnName",ptnName);
