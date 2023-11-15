@@ -91,7 +91,7 @@ public class OrderDAO {
                     "PI.REPAIR_DETAIL_FK, " +
                     "PI.REPAIR_PRICE, " +
                     "PT.PTN_ID_PK, " +
-                    "PI.REPAIR_DAYS " +
+                    "PI.REPAIR_DAYS, PT.PTN_UNIQUE_NUM " +
                     "FROM " +
                     "PARTNER_ITEM_TB PI " +
                     "JOIN PARTNER_TB PT ON " +
@@ -103,7 +103,7 @@ public class OrderDAO {
                     "WHERE " +
                     "PI.REPAIR_DETAIL_FK = ? AND PI.REPAIR_PRICE <> 0 " +
                     "GROUP BY " +
-                    "PT.PTN_LOGO, PT.PTN_NAME, PI.REPAIR_DETAIL_FK, PI.REPAIR_PRICE, PT.PTN_ID_PK, PI.REPAIR_DAYS " +
+                    "PT.PTN_LOGO, PT.PTN_NAME, PI.REPAIR_DETAIL_FK, PI.REPAIR_PRICE, PT.PTN_ID_PK, PI.REPAIR_DAYS, PT.PTN_UNIQUE_NUM " +
                     "ORDER BY " +
                     "PI.REPAIR_PRICE ASC";
             pstmt = conn.prepareStatement(sql);// 받을 준비
@@ -118,6 +118,7 @@ public class OrderDAO {
                 String ptnName = rs.getString("PTN_NAME");
                 String repairDetail = rs.getString("REPAIR_DETAIL_FK");
                 int repairPrice = rs.getInt("REPAIR_PRICE");
+                int ptnNum = rs.getInt("PTN_UNIQUE_NUM");
 
                 // 리액트에서 선언한 이름을 ""사이에
                 Map<String, Object> ptnMap = new HashMap<>();
@@ -128,6 +129,7 @@ public class OrderDAO {
                 ptnMap.put("ptnName",ptnName);
                 ptnMap.put("repairItem",repairDetail);
                 ptnMap.put("repairPrice",repairPrice);
+                ptnMap.put("ptnNum", ptnNum);
 
                 list.add(ptnMap);
             }
@@ -189,6 +191,10 @@ public class OrderDAO {
         }
         return list;
     }
+
+//    DB 전체로 넘기기 위한
+//INSERT INTO ORDER_TB(ORDER_NUM_PK,USER_ID_FK,PTN_ID_FK,BRAND,REPAIR_DETAIL_FK,ORDER_REQUEST,PRICE_TOTAL,ORDER_DATE,COMPLETE_DATE,ORDER_PRG,IMG_FULL,IMG_COMP,IMG_DETAIL_01,IMG_DETAIL_02,IMG_DETAIL_03) VALUES(TO_NUMBER(CONCAT(?,ORDER_NUM_SEQ.NEXTVAL)), ? , ? , ? , ? , ? , ? , SYSDATE, SYSDATE+?, '주문접수', ?,?,?,?,? );
+
 }
 
 
