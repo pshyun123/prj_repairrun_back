@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import static com.kh.repairrun.common.Common.CORS_ORIGIN;
 
-@CrossOrigin(origins = "http://localhost:3000")
+
+@CrossOrigin(origins = CORS_ORIGIN)
 @RestController
 @RequestMapping("/mypage")
 public class MyReviewController {

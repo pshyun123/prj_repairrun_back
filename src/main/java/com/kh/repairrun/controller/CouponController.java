@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+import static com.kh.repairrun.common.Common.CORS_ORIGIN;
+
+@CrossOrigin(origins = CORS_ORIGIN)
 @RestController
 @RequestMapping("/coupon")
 public class CouponController {

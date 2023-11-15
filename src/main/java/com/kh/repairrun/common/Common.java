@@ -10,6 +10,9 @@ public class Common {
     final static String ORACLE_PW = "REPAIRRUN";
     final static String ORACLE_DRV = "oracle.jdbc.driver.OracleDriver";
 
+    // CORS 설정
+    public final static String CORS_ORIGIN = "http://localhost:3000";
+
     public static Connection getConnection() {
         Connection conn = null;
         try {

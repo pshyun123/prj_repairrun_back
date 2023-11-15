@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-@CrossOrigin (origins = "http://localhost:3000")// 같은 로컬 호스트 쓰는 법
+import static com.kh.repairrun.common.Common.CORS_ORIGIN;
+
+@CrossOrigin (origins = CORS_ORIGIN)// 같은 로컬 호스트 쓰는 법
 @RestController // restAPI 쓰겠다는 선언! 알아서 json 데이터로 변환, 리액트에서는 axios가 같은 역할
 @RequestMapping("/order") // 접근주소
 

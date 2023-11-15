@@ -7,10 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PartnerDAO {
     private Connection conn = null;
@@ -40,6 +37,7 @@ public class PartnerDAO {
         Common.close(rs);
         Common.close(pstmt);
         Common.close(conn);
+        System.out.println(isPartner);
         return isPartner;
     }
     // 파트너 정보 조회
@@ -220,6 +218,69 @@ public class PartnerDAO {
         else return false;
     }
 
+    // 파트너 가입 시 수선 정보 입력
+    public boolean batchInputPartnerItems(String ptnId) {
+        int[] results;
+        String sql = "INSERT INTO PARTNER_ITEM_TB (PTN_ID_FK, REPAIR_DETAIL_FK, REPAIR_ITEM, REPAIR_PRICE, REPAIR_DAYS) " +
+                "VALUES (?, ?, ?, 0, 0)";
+        try {
+            conn = Common.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(sql);
+
+            // Predefined data
+            String[][] predefinedData = {
+                    {"가방 클리닝", "가방"},
+                    {"가죽 복원", "가방"},
+                    {"지퍼 수선", "가방"},
+                    {"신발 클리닝", "신발"},
+                    {"부분 염색", "신발"},
+                    {"손상 복원", "신발"},
+                    {"디자인 수선", "의류"},
+                    {"사이즈 수선", "의류"},
+                    {"기장 수선", "의류"},
+                    {"벨트 길이 수선", "지갑벨트"},
+                    {"가죽 교체", "지갑벨트"},
+                    {"염색", "지갑벨트"}
+            };
+
+            for (String[] data : predefinedData) {
+                pstmt.setString(1, ptnId);
+                pstmt.setString(2, data[0]);
+                pstmt.setString(3, data[1]);
+                pstmt.addBatch();
+            }
+
+            results = pstmt.executeBatch();
+            for (int i = 0; i < results.length; i++) {
+                System.out.println("Statement " + (i + 1) + " update count: " + results[i]);
+            }
+            conn.commit();  // Commit the batch
+
+            // Process results as needed
+            for (int result : results) {
+                if (result != 1 && result != -2) {
+                    // Handle failure if needed
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (conn != null) {
+                    conn.rollback();  // Rollback in case of an exception
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        } finally {
+            Common.close(pstmt);
+            Common.close(conn);
+        }
+    }
+
     // 파트너 정보 수정
     public boolean partnerUpdate(String ptnId, String ptnPw, String ptnEmail, String ptnPhone, String ptnAddr, String ptnImg, String ptnDesc) {
         int result = 0;
@@ -274,34 +335,40 @@ public class PartnerDAO {
         List<Map<String, Object>> partnerList = new ArrayList<>();
         try {
             conn = Common.getConnection();
-            String sql = "SELECT DISTINCT PT.PTN_NAME, PT.PTN_LOGO, PI.REPAIR_ITEM, FLOOR(AVG(RT.RATING)) AS AVG_RATING " +
-                    "FROM PARTNER_TB PT " +
-                    "JOIN PARTNER_ITEM_TB PI ON PT.PTN_ID_PK = PI.PTN_ID_FK " +
-                    "JOIN ORDER_TB OT ON PT.PTN_ID_PK = OT.PTN_ID_FK " +
-                    "JOIN REVIEW_TB RT ON OT.ORDER_NUM_PK = RT.ORDER_NUM_FK " +
-                    "WHERE PI.REPAIR_PRICE <> 0 " +
-                    "GROUP BY PT.PTN_NAME, PT.PTN_LOGO, PI.REPAIR_ITEM " +
-                    "ORDER BY AVG_RATING DESC";  // 변경: PTN_UNIQUE_NUM이 없어졌으므로 ORDER BY 절 수정
+            String sql = "SELECT PTN_NAME, PTN_LOGO, PTN_ID_PK, FLOOR(AVG(RATING)) AS AVG_RATING, " +
+                    "LISTAGG(REPAIR_ITEM, ', ') WITHIN GROUP (ORDER BY REPAIR_ITEM) AS REPAIR_ITEMS " +
+                    "FROM (SELECT DISTINCT PT.PTN_NAME, PT.PTN_LOGO, PT.PTN_ID_PK, PI.REPAIR_ITEM, RT.RATING " +
+                    "FROM PARTNER_TB PT JOIN PARTNER_ITEM_TB PI ON PT.PTN_ID_PK = PI.PTN_ID_FK " +
+                    "LEFT JOIN ORDER_TB OT ON PT.PTN_ID_PK = OT.PTN_ID_FK " +
+                    "LEFT JOIN REVIEW_TB RT ON OT.ORDER_NUM_PK = RT.ORDER_NUM_FK " +
+                    "WHERE PI.REPAIR_PRICE <> 0) " +
+                    "GROUP BY PTN_NAME, PTN_LOGO, PTN_ID_PK " +
+                    "ORDER BY AVG_RATING DESC";
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                Map<String, Object> ptnMap = new HashMap<>();
                 String ptnName = rs.getString("PTN_NAME");
                 String ptnLogo = rs.getString("PTN_LOGO");
                 int avgRating = rs.getInt("AVG_RATING");
-                String repairItem = rs.getString("REPAIR_ITEM");
+                String repairItems = rs.getString("REPAIR_ITEMS");
+                String ptnId = rs.getString("PTN_ID_PK");
 
                 String rating = "";
                 if(avgRating > 0) rating = "★".repeat(avgRating);
                 else if (avgRating == 0) rating = "☆".repeat(5);
 
+                Map<String, Object> ptnMap = new HashMap<>();
                 ptnMap.put("ptnName", ptnName);
                 ptnMap.put("ptnLogo", ptnLogo);
                 ptnMap.put("rating", rating);
+                ptnMap.put("ptnId", ptnId);
 
+                String[] repairItemsArray = repairItems.split(", ");
+                Set<String> uniqueRepairItems = new LinkedHashSet<>(Arrays.asList(repairItemsArray));
+                String uniqueRepairItemsString = String.join(", ", uniqueRepairItems);
 
-                ptnMap.put("repairItem", repairItem);
+                ptnMap.put("repairItem", uniqueRepairItemsString);
 
                 partnerList.add(ptnMap);
 

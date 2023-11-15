@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+import static com.kh.repairrun.common.Common.CORS_ORIGIN;
+
+@CrossOrigin(origins = CORS_ORIGIN)
 @RestController
 @RequestMapping("/partners")
 public class PartnerController {
@@ -75,6 +77,14 @@ public class PartnerController {
         String ptnLogo = newPtnData.get("ptnLogo");
         PartnerDAO dao = new PartnerDAO();
         boolean result = dao.newPartnerInsert(id, pw, name, ptnEmail, ptnPhone, ptnAddr, ptnDesc, ptnLogo);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/insertitems")
+    public ResponseEntity<Boolean> insertPartnerItems(@RequestBody Map<String, String> newPtn) {
+        String ptnId = newPtn.get("ptnId");
+        PartnerDAO dao = new PartnerDAO();
+        boolean result = dao.batchInputPartnerItems(ptnId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
