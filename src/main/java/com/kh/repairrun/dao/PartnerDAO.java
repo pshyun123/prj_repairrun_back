@@ -299,6 +299,8 @@ public class PartnerDAO {
                 ptnMap.put("ptnName", ptnName);
                 ptnMap.put("ptnLogo", ptnLogo);
                 ptnMap.put("rating", rating);
+
+
                 ptnMap.put("repairItem", repairItem);
 
                 partnerList.add(ptnMap);

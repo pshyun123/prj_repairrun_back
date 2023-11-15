@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 @CrossOrigin (origins = "http://localhost:3000")// 같은 로컬 호스트 쓰는 법
 @RestController // restAPI 쓰겠다는 선언! 알아서 json 데이터로 변환, 리액트에서는 axios가 같은 역할
@@ -54,6 +55,27 @@ public class OrderController {
         OrderDAO dao = new OrderDAO();
         List<Map<String,Object>> result = dao.payment(processP);
         return new ResponseEntity<>(result,HttpStatus.OK);
+
+    }
+
+    @PostMapping("/neworder")
+    public ResponseEntity<Boolean> newOrderInsert(@RequestBody Map<String, String> orderData) {
+        String orderNum = orderData.get("orderNum");
+        String userId = orderData.get("userId");
+        String ptnId = orderData.get("ptnId");
+        String brand = orderData.get("brand");
+        String repairDetail = orderData.get("repairDetail");
+        String request = orderData.get("request");
+        Integer priceTotal = Integer.parseInt(orderData.get("priceTotal"));
+        Integer days = Integer.parseInt(orderData.get("days"));
+        String imgFull = orderData.get("imgFull");
+        String imgDet01 = orderData.get("imgDet01");
+        String imgDet02 = orderData.get("imgDet02");
+        String imgDet03 = orderData.get("imgDet03");
+        OrderDAO dao = new OrderDAO();
+        Boolean result = dao.newOrder(orderNum, userId, ptnId, brand, repairDetail, request, priceTotal, days, imgFull, imgDet01, imgDet02, imgDet03);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
 
     }
 

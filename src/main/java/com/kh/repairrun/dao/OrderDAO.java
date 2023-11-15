@@ -192,8 +192,35 @@ public class OrderDAO {
         return list;
     }
 
-//    DB 전체로 넘기기 위한
-//INSERT INTO ORDER_TB(ORDER_NUM_PK,USER_ID_FK,PTN_ID_FK,BRAND,REPAIR_DETAIL_FK,ORDER_REQUEST,PRICE_TOTAL,ORDER_DATE,COMPLETE_DATE,ORDER_PRG,IMG_FULL,IMG_COMP,IMG_DETAIL_01,IMG_DETAIL_02,IMG_DETAIL_03) VALUES(TO_NUMBER(CONCAT(?,ORDER_NUM_SEQ.NEXTVAL)), ? , ? , ? , ? , ? , ? , SYSDATE, SYSDATE+?, '주문접수', ?,?,?,?,? );
+    // 새 주문 정보 인서트
+    public boolean newOrder(String orderNum, String userId, String ptnId,String brand, String repairDetail, String request, int priceTotal, int days, String imgFull, String imgDet01, String imgDet02, String imgDet03) {
+        int result = 0;
+        String sql = "INSERT INTO ORDER_TB(ORDER_NUM_PK,USER_ID_FK,PTN_ID_FK,BRAND,REPAIR_DETAIL_FK,ORDER_REQUEST,PRICE_TOTAL,ORDER_DATE,COMPLETE_DATE,ORDER_PRG,IMG_FULL,IMG_COMP,IMG_DETAIL_01,IMG_DETAIL_02,IMG_DETAIL_03) VALUES(TO_NUMBER(CONCAT(?,ORDER_NUM_SEQ.NEXTVAL)), ? , ? , ? , ? , ? , ? , SYSDATE, SYSDATE+?, '주문접수', ?,'',?,?,? )";
+        try{
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,orderNum);
+            pstmt.setString(2,userId);
+            pstmt.setString(3,ptnId);
+            pstmt.setString(4,brand);
+            pstmt.setString(5,repairDetail);
+            pstmt.setString(6,request);
+            pstmt.setInt(7,priceTotal);
+            pstmt.setInt(8, days);
+            pstmt.setString(9, imgFull);
+            pstmt.setString(10, imgDet01);
+            pstmt.setString(11, imgDet02);
+            pstmt.setString(12, imgDet03);
+            result = pstmt.executeUpdate();
+            System.out.println("회원 수정 결과 : " + result);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
+        if(result == 1) return true;
+        else return false;
+    }
 
 }
 
