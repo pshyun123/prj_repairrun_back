@@ -15,8 +15,8 @@ import java.util.Map;
 public class MyReviewController {
     // Service 페이지
     @PostMapping("/myreview") //FAQ(리액트에서 들어오는값을 쓰는것)
-    public ResponseEntity<List<Map<String, String>>> myReviewAll(@RequestBody Map<String,String> userId) {
-        String userIdBox = userId.get("userId");
+    public ResponseEntity<List<Map<String, String>>> myReviewAll(@RequestBody Map<String,String> userIdData) {
+        String userIdBox = userIdData.get("userId");
         MemReviewDAO dao = new MemReviewDAO();
         List<Map<String, String>> myReviewList = dao.userMyreview(userIdBox);
         System.out.println(userIdBox);

@@ -18,6 +18,7 @@ public class MemReviewDAO {
         try {
             conn = Common.getConnection();
             String sql = "SELECT DISTINCT " +
+                    "RT.ORDER_NUM_FK, " +
                     "PT.PTN_NAME, " +
                     "OT.IMG_FULL, " +
                     "OT.IMG_COMP, " +
@@ -46,20 +47,22 @@ public class MemReviewDAO {
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 Map<String,String> myReviewMap = new HashMap<>();
+                String orderNumFk = rs.getString("ORDER_NUM_FK");
                 String ptnName = rs.getString("PTN_NAME");
                 String imgFull = rs.getString("IMG_FULL");
                 String imgComp = rs.getString("IMG_COMP");
-                int ratting = rs.getInt("RATING");
+                int rating = rs.getInt("RATING");
                 String compDate = rs.getString("COMP_DATE");
                 String reviewContents = rs.getString("REVIEW_CONTENTS");
                 String reviewUserId = rs.getString("USER_ID_PK");
                 String repairItem = rs.getString("REPAIR_ITEM");
                 String isReview = rs.getString("IS_REVIEW");
                 System.out.println();
+                myReviewMap.put("orderNumFk", orderNumFk);
                 myReviewMap.put("ptnName", ptnName);
                 myReviewMap.put("imgFull",imgFull);
                 myReviewMap.put("imgComp", imgComp);
-                myReviewMap.put("ratting", "★".repeat(ratting));
+                myReviewMap.put("rating", "★".repeat(rating));
                 myReviewMap.put("compDate", compDate);
                 myReviewMap.put("reviewContents", reviewContents);
                 myReviewMap.put("userId", reviewUserId);
