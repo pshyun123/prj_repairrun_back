@@ -47,6 +47,38 @@ public class OrderDAO {
     }
 
 
+
+
+    //ddd
+    public String itemInfo (String selDetail) {//리액트에서 전달 될 값. 매개변수 자리에 원하는 이름 지정. 외부에서 값이 들어오는 경우는 매개변수라고 생각
+        String item = "";
+        try{
+            conn = Common.getConnection();
+            String sql = "SELECT REPAIR_ITEM FROM REPAIR_ITEM_TB WHERE REPAIR_DETAIL_PK = ?";
+
+
+            pstmt = conn.prepareStatement(sql);// 보낼 쿼리문을 준비
+            //?의 값을 지정
+            pstmt.setString(1,selDetail); // 1번 물음표에 selItem이 올 것임
+
+            rs = pstmt.executeQuery();// 보냄. rs의 값 반환을 위한 것. set 형식으로 리스트 받겠다.
+
+
+            if (rs.next()) { // 값이 있는 동안 한줄씩 반환
+                String repairItem = rs.getString("REPAIR_ITEM");
+                item = repairItem;
+            }
+            Common.close(rs);
+            Common.close(pstmt);
+            Common.close(conn);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return item;
+    }
+
 // PartnerSelect.jsx 부분
     public List<Map<String,Object>> partnerSelect (String selDetail) {
         List<Map<String,Object>> list = new ArrayList<>();

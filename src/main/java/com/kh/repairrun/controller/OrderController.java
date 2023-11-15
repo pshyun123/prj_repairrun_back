@@ -23,6 +23,18 @@ public class OrderController {
         return new ResponseEntity<>(result, HttpStatus.OK); // 반환해주는 변수 이름이 result,HttpStatus 200일 경우에만 반환
 
     }
+
+    @PostMapping("/item")
+    // 매개변수는 () 사용 ()안의 값에는 리액트에서 넘어오는 값, 키와 밸류의 자료형 선언^^
+    public ResponseEntity<String> repairItem (@RequestBody Map<String,String> selectDetail) {//리스트로 받을거라고 선언
+        String selDetail = selectDetail.get("detail"); // 리액트에서 받아온 정보를 repairItem으로 사용하겠다고 선언
+        OrderDAO dao = new OrderDAO(); // 객체 생성
+        String result = dao.itemInfo(selDetail); // 리스트로 값을 반환
+        return new ResponseEntity<>(result, HttpStatus.OK); // 반환해주는 변수 이름이 result,HttpStatus 200일 경우에만 반환
+
+    }
+
+
 //json은 string으로 받아서 "" 필수
 
 //    메소드 명은 소문자 함수도..
