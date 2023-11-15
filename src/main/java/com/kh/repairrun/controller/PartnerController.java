@@ -1,13 +1,11 @@
 package com.kh.repairrun.controller;
 
-import com.kh.repairrun.dao.MemberDAO;
 import com.kh.repairrun.dao.PartnerDAO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -103,5 +101,14 @@ public class PartnerController {
         PartnerDAO dao = new PartnerDAO();
         boolean result = dao.updateItemInfo(ptnId, repairDetail, days, price);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/ptnlist")
+    public ResponseEntity <List<Map<String, Object>>>partnerlist(){
+        PartnerDAO dao = new PartnerDAO();
+        List<Map<String,Object>> partnerList = new ArrayList<>();
+        partnerList = dao.ptnList();
+        System.out.println(partnerList);
+        return new ResponseEntity<>(partnerList,HttpStatus.OK);
     }
 }

@@ -269,4 +269,50 @@ public class PartnerDAO {
         Common.close(conn);
         return isUpdate;
     }
+
+    public List<Map<String, Object>> ptnList() {
+        List<Map<String, Object>> partnerList = new ArrayList<>();
+        try {
+            conn = Common.getConnection();
+            String sql = "SELECT DISTINCT PT.PTN_NAME, PT.PTN_LOGO, PI.REPAIR_ITEM, FLOOR(AVG(RT.RATING)) AS AVG_RATING " +
+                    "FROM PARTNER_TB PT " +
+                    "JOIN PARTNER_ITEM_TB PI ON PT.PTN_ID_PK = PI.PTN_ID_FK " +
+                    "JOIN ORDER_TB OT ON PT.PTN_ID_PK = OT.PTN_ID_FK " +
+                    "JOIN REVIEW_TB RT ON OT.ORDER_NUM_PK = RT.ORDER_NUM_FK " +
+                    "WHERE PI.REPAIR_PRICE <> 0 " +
+                    "GROUP BY PT.PTN_NAME, PT.PTN_LOGO, PI.REPAIR_ITEM " +
+                    "ORDER BY AVG_RATING DESC";  // 변경: PTN_UNIQUE_NUM이 없어졌으므로 ORDER BY 절 수정
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> ptnMap = new HashMap<>();
+                String ptnName = rs.getString("PTN_NAME");
+                String ptnLogo = rs.getString("PTN_LOGO");
+                int avgRating = rs.getInt("AVG_RATING");
+                String repairItem = rs.getString("REPAIR_ITEM");
+
+                String rating = "";
+                if(avgRating > 0) rating = "★".repeat(avgRating);
+                else if (avgRating == 0) rating = "☆".repeat(5);
+
+                ptnMap.put("ptnName", ptnName);
+                ptnMap.put("ptnLogo", ptnLogo);
+                ptnMap.put("rating", rating);
+                ptnMap.put("repairItem", repairItem);
+
+                partnerList.add(ptnMap);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Common.close(rs);
+            Common.close(pstmt);
+            Common.close(conn);
+        }
+        System.out.println(partnerList);
+        return partnerList;
+    }
 };
