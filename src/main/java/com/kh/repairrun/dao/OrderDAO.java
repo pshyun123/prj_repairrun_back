@@ -136,9 +136,7 @@ public class OrderDAO {
             //?의 값을 지정
             pstmt.setString(1,paySum); //
             rs = pstmt.executeQuery();//
-
             while (rs.next()) { // 값이 있는 동안 한줄씩 반환
-
                 String couponType = rs.getString("COUPON_TYPE_FK");
                 String discountAmount = rs.getString("DISCOUNT_AMOUNT");
                 String minPrice = rs.getString("MIN_PRICE");
