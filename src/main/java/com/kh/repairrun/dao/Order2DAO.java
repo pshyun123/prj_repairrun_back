@@ -92,4 +92,80 @@ public class Order2DAO {
 
         return list;
     }
+
+    // 특정 주문 현황 보여주기
+    public Map<String, Object> orderStatus (String orderNum) {
+        Map<String, Object> orderMap = new HashMap<>();
+        String sql = "SELECT DISTINCT O.ORDER_NUM_PK, O.USER_ID_FK, PI.REPAIR_DETAIL_FK, " +
+                "PI.REPAIR_ITEM, FLOOR(SYSDATE - O.COMPLETE_DATE) AS DDAY, " +
+                "O.ORDER_REQUEST, O.BRAND, O.PRICE_TOTAL, O.IMG_FULL, O.IMG_DETAIL_01, O.IMG_DETAIL_02, O.IMG_DETAIL_03, O.IMG_COMP, O.ORDER_PRG " +
+                "FROM ORDER_TB O " +
+                "JOIN PARTNER_TB P ON O.PTN_ID_FK = P.PTN_ID_PK " +
+                "JOIN PARTNER_ITEM_TB PI ON O.REPAIR_DETAIL_FK = PI.REPAIR_DETAIL_FK " +
+                "WHERE O.ORDER_NUM_PK = ?";
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, orderNum);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()) {
+                String orderNumber = rs.getString("ORDER_NUM_PK");
+                String userId = rs.getString("USER_ID_FK");
+                String detail = rs.getString("REPAIR_DETAIL_FK");
+                String item = rs.getString("REPAIR_ITEM");
+                int dDay = rs.getInt("DDAY");
+                String request = rs.getString("ORDER_REQUEST");
+                String brand = rs.getString("BRAND");
+                int totalPrice = rs.getInt("PRICE_TOTAL");
+                String fullImg = rs.getString("IMG_FULL");
+                String detImg01 = rs.getString("IMG_DETAIL_01");
+                String detImg02 = rs.getString("IMG_DETAIL_02");
+                String detImg03 = rs.getString("IMG_DETAIL_03");
+                String compImg = rs.getString("IMG_COMP");
+                String orderPrg = rs.getString("ORDER_PRG");
+
+                String day;
+                if (orderPrg.equalsIgnoreCase("완료")) day = "완료";
+                else day = "D"+dDay;
+
+                orderMap.put("orderNum", orderNumber);
+                orderMap.put("orderId", userId);
+                orderMap.put("detail", detail);
+                orderMap.put("item", item);
+                orderMap.put("dDay", day);
+                orderMap.put("request", request);
+                orderMap.put("brand", brand);
+                orderMap.put("totalPrice", totalPrice);
+                orderMap.put("orderPrg", orderPrg);
+
+                List<Map<String,String>> imgMapList = new ArrayList<>();
+                String [] typeName = {"imgFullUrl", "imgDetUrl1", "imgDetUrl2", "imgDetUrl3", "imgCompUrl"};
+                List<String> imgList = new ArrayList<>();
+                imgList.add(fullImg);
+                imgList.add(detImg01);
+                if(detImg02 != null) imgList.add(detImg02);
+                if(detImg03 != null) imgList.add(detImg03);
+                if(compImg != null) imgList.add(compImg);
+                for(int i = 0; i < imgList.size(); i++) {
+                    Map<String, String> imgMap = new HashMap<>();
+                    imgMap.put("type", typeName[i]);
+                    imgMap.put("imgUrl",imgList.get(i));
+                    imgMapList.add(imgMap);
+                }
+                Common.close(rs);
+                Common.close(pstmt);
+                Common.close(conn);
+                orderMap.put("imgListUrl", imgMapList);
+            }
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(rs);
+        Common.close(pstmt);
+        Common.close(conn);
+        return orderMap;
+    }
 }

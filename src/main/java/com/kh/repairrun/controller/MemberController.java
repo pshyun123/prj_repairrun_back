@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -30,6 +31,20 @@ public class MemberController {
         String memberId = memberData.get("memberId");
         MemberDAO dao = new MemberDAO();
         Map<String, String> result = dao.memberInfo(memberId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    // 회원정보 수정
+    @PostMapping("/updateinfo")
+    public ResponseEntity<Boolean> updateMemInfo(@RequestBody Map<String, String> updateList) {
+        String userId = updateList.get("userId");
+        String userPw = updateList.get("userPw");
+        String userEmail = updateList.get("userEmail");
+        String userPhone = updateList.get("userPhone");
+        String userAddr = updateList.get("userAddr");
+        String userImg = updateList.get("userImg");
+        MemberDAO dao = new MemberDAO();
+        boolean result = dao.memberUpdate(userId, userPw, userEmail, userPhone, userAddr, userImg);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

@@ -80,6 +80,20 @@ public class PartnerController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PostMapping("/updateinfo")
+    public ResponseEntity<Boolean> updatePtnInfo(@RequestBody Map<String, String> updateList) {
+        String ptnId = updateList.get("ptnId");
+        String ptnPw = updateList.get("ptnPw");
+        String ptnEmail = updateList.get("ptnEmail");
+        String ptnPhone = updateList.get("ptnPhone");
+        String ptnAddr = updateList.get("ptnAddr");
+        String ptnImg = updateList.get("ptnImg");
+        String ptnDesc = updateList.get("ptnDesc");
+        PartnerDAO dao = new PartnerDAO();
+        boolean result = dao.partnerUpdate(ptnId, ptnPw, ptnEmail, ptnPhone, ptnAddr, ptnImg, ptnDesc);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PostMapping("/updatedetail")
     public ResponseEntity<Boolean> updateDetail(@RequestBody Map<String,String> updateInfo) {
         String ptnId = updateInfo.get("ptnId");

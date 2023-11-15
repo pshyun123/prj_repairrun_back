@@ -128,4 +128,29 @@ public class MemberDAO {
         if(result == 1) return true;
         else return false;
     }
+
+    //회원 정보 수정
+    public boolean memberUpdate(String userId, String userPw, String userEmail, String userPhone, String userAddr, String userImg) {
+        int result = 0;
+        String sql = "UPDATE MEMBER_TB SET USER_PW = ?, USER_EMAIL = ?, USER_PHONE = ?, USER_ADDR = ?, USER_IMG = ? WHERE USER_ID_PK = ?";
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userPw);
+            pstmt.setString(2, userEmail);
+            pstmt.setString(3, userPhone);
+            pstmt.setString(4, userAddr);
+            pstmt.setString(5, userImg);
+            pstmt.setString(6, userId);
+            result = pstmt.executeUpdate();
+            System.out.println("회원수정 결과 : " + result);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
+
+        if(result == 1) return true;
+        else return false;
+    }
 }

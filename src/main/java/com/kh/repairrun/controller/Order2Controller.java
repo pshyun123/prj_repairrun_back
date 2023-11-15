@@ -20,4 +20,11 @@ public class Order2Controller {
         List<Map<String,Object>> result = dao.orderStatusList(type,id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+    @PostMapping("/order")
+    public ResponseEntity<Map<String,Object>> oderInfo(@RequestBody Map<String,String> orderNum) {
+        String orderNumber = orderNum.get("orderNum");
+        Order2DAO dao = new Order2DAO();
+        Map<String,Object> result = dao.orderStatus(orderNumber);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

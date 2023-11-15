@@ -220,6 +220,34 @@ public class PartnerDAO {
         else return false;
     }
 
+    // 파트너 정보 수정
+    public boolean partnerUpdate(String ptnId, String ptnPw, String ptnEmail, String ptnPhone, String ptnAddr, String ptnImg, String ptnDesc) {
+        int result = 0;
+        String sql = "UPDATE PARTNER_TB SET PTN_PW = ?, PTN_EMAIL = ?, PTN_PHONE = ?, PTN_ADDR = ?, PTN_LOGO = ?, PTN_DESC = ? WHERE PTN_ID_PK = ?";
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, ptnPw);
+            pstmt.setString(2, ptnEmail);
+            pstmt.setString(3, ptnPhone);
+            pstmt.setString(4, ptnAddr);
+            pstmt.setString(5, ptnImg);
+            pstmt.setString(6, ptnDesc);
+            pstmt.setString(7, ptnId);
+            result = pstmt.executeUpdate();
+            System.out.println("회원수정 결과 : " + result);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
+
+        if(result == 1) return true;
+        else return false;
+    }
+
+
+
     // 수선항목 수정
     public boolean updateItemInfo (String ptnId, String repairDetail, int days, int price) {
         boolean isUpdate = false;
