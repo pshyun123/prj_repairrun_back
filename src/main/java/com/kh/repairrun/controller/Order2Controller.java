@@ -1,6 +1,7 @@
 package com.kh.repairrun.controller;
 
 import com.kh.repairrun.dao.Order2DAO;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,15 @@ public class Order2Controller {
         String orderNumber = orderNum.get("orderNum");
         Order2DAO dao = new Order2DAO();
         Map<String,Object> result = dao.orderStatus(orderNumber);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/updateprg")
+    public ResponseEntity<Boolean> prgUpdate(@RequestBody Map<String, String> updateInfo) {
+        String orderNum = updateInfo.get("orderNum");
+        String selPrg = updateInfo.get("selPrg");
+        Order2DAO dao = new Order2DAO();
+        Boolean result = dao.updatePrg(orderNum, selPrg);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

@@ -168,4 +168,25 @@ public class Order2DAO {
         Common.close(conn);
         return orderMap;
     }
+
+    public Boolean updatePrg (String orderNum, String selPrg) {
+        int result = 0;
+        String sql = "UPDATE ORDER_TB SET ORDER_PRG = ? WHERE ORDER_NUM_PK = ?";
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,selPrg);
+            pstmt.setString(2,orderNum);
+            result = pstmt.executeUpdate();
+            System.out.println("수정 결과 : " + result);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
+
+        if(result == 1) return true;
+        else return false;
+    }
 }
