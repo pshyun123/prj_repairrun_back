@@ -10,4 +10,8 @@ class RepairrunApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void contextLoad() {
+	}
+
 }
